@@ -12,7 +12,7 @@ exports.logIn = async (req, res) => {
         })
 
         if (!user) {
-            return res.status(400).send('User not found')
+            return res.status(400).json('User not found')
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
