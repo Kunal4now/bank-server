@@ -8,7 +8,7 @@ exports.getTransactions = async (req, res) => {
         let transactions = await Transaction.find({accountNo: accountNo});
 
         if (!transactions) {
-            res.status(400).send('No transactions found')
+            res.status(400).json('No transactions found')
         }
 
         let userTransactions = transactions.filter((transaction) => {
@@ -28,6 +28,10 @@ exports.transfer = async (req, res) => {
 
         const senderAccount = await User.findOne({accountNo: sender});
         const receiverAccount = await User.findOne({accountNo: receiver});
+
+        if (!senderAccount || !receiverAccount) {
+            res.status(400).json('Account not found')
+        }
 
         if (receiverAccount.role !== 'user') {
             return res.status(400).json({messg: 'Receiver is not a user', success: false});
