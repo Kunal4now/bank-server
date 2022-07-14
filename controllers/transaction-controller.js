@@ -29,6 +29,10 @@ exports.transfer = async (req, res) => {
         const senderAccount = await User.findOne({accountNo: sender});
         const receiverAccount = await User.findOne({accountNo: receiver});
 
+        if (receiverAccount.role !== 'user') {
+            return res.status(400).json({messg: 'Receiver is not a user', success: false});
+        }
+
         if (sender === receiver) {
             return res.status(400).json({messg: 'You cannot transfer to your own account', success: false})
         }
@@ -69,6 +73,10 @@ exports.credit = async (req, res) => {
 
         const user = await User.findOne({accountNo: accountNo});
 
+        if (user.role !== 'user') {
+            return res.status(400).json({messg: 'Cannot credit to this account', success: false});
+        }
+
         if (!user) {
             res.status(400).json({messg: 'User not found', success: false})
         }
@@ -107,6 +115,10 @@ exports.debit = async (req, res) => {
         const {accountNo, amount} = req.body;
 
         const user = await User.findOne({accountNo: accountNo});
+
+        if (user.role !== 'user') {
+            return res.status(400).json({messg: 'Cannot debit from this account', success: false});
+        }
 
         if (!user) {
             res.status(400).json({messg: 'User not found', success: false})
