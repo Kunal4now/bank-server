@@ -38,23 +38,24 @@ exports.transfer = async (req, res) => {
         const receiverAccount = await User.findOne({accountNo: receiver});
 
         if (!senderAccount || !receiverAccount) {
-            return res.status(400).json({messg: 'Account not found', success: false});
+            return res.status(400).json({messg: ['Account not found'], success: false});
         }
 
         if (receiverAccount.role !== 'user') {
-            return res.status(400).json({messg: 'Receiver is not a user', success: false});
+            return res.status(400).json({messg: ['Receiver is not a user'], success: false});
         }
 
-        if (sender === receiver) {
-            return res.status(400).json({messg: 'You cannot transfer to your own account', success: false})
+        console.log(sender, receiver)
+        if (sender == receiver) {
+            return res.status(400).json({messg: ['You cannot transfer to your own account'], success: false})
         }
 
         if (amount <= 0) {
-            return res.status(400).json({messg: 'Invalid Amount', success: false})
+            return res.status(400).json({messg: ['Invalid Amount'], success: false})
         }
 
         if (senderAccount.balance < amount) {
-            return res.status(400).json({messg: 'Insufficient balance', success: false});
+            return res.status(400).json({messg: ['Insufficient balance'], success: false});
         }
 
         const transaction = new Transaction({
@@ -73,7 +74,7 @@ exports.transfer = async (req, res) => {
             $inc: {balance: amount}
         });
 
-        return res.status(200).json({messg: 'Transaction successful', success: true});
+        return res.status(200).json({messg: ['Transaction successful'], success: true});
     } catch(err) {
         return res.status(500).json({messg: err, success: false});
     }
@@ -93,14 +94,14 @@ exports.credit = async (req, res) => {
         const user = await User.findOne({accountNo: accountNo});
 
         if (user.role !== 'user') {
-            return res.status(400).json({messg: 'Cannot credit to this account', success: false});
+            return res.status(400).json({messg: ['Cannot credit to this account'], success: false});
         }
         if (!user) {
-            res.status(400).json({messg: 'User not found', success: false})
+            res.status(400).json({messg: ['User not found'], success: false})
         }
 
         if (amount <= 0) {
-            return res.status(400).json({messg: 'Invalid Amount', success: false})
+            return res.status(400).json({messg: ['Invalid Amount'], success: false})
         }
 
         const transaction = new Transaction({
@@ -122,7 +123,7 @@ exports.credit = async (req, res) => {
             }
         })
 
-        res.status(200).json({messg: 'Credit successful', success: true});
+        res.status(200).json({messg: ['Credit successful'], success: true});
     } catch(err) {
         res.status(500).json(err);
     }
@@ -142,19 +143,19 @@ exports.debit = async (req, res) => {
         const user = await User.findOne({accountNo: accountNo});
 
         if (user.role !== 'user') {
-            return res.status(400).json({messg: 'Cannot debit from this account', success: false});
+            return res.status(400).json({messg: ['Cannot debit from this account'], success: false});
         }
 
         if (!user) {
-            res.status(400).json({messg: 'User not found', success: false})
+            res.status(400).json({messg: ['User not found'], success: false})
         }
 
         if (amount <= 0) {
-            return res.status(400).json({messg: 'Invalid Amount', success: false})
+            return res.status(400).json({messg: ['Invalid Amount'], success: false})
         }
 
         if (user.balance - amount < 0 || amount <= 0) {
-            return res.status(400).json({messg: 'Insufficient balance', success: false});
+            return res.status(400).json({messg: ['Insufficient balance'], success: false});
         }
 
         const transaction = new Transaction({
@@ -176,7 +177,7 @@ exports.debit = async (req, res) => {
             }
         })
 
-        res.status(200).json({messg: 'Debit successful', success: true});
+        res.status(200).json({messg: ['Debit successful'], success: true});
     } catch(err) {
         res.status(500).json(err);
     }

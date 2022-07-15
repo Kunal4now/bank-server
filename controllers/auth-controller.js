@@ -63,7 +63,7 @@ exports.createUser = async (req, res) => {
         })
 
         if (user) {
-            res.status(400).json('User already exists')
+            res.status(400).json({messg:['User already exists'], success: false})
         }
 
         //generate unique account number

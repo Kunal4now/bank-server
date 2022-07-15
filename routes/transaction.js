@@ -7,7 +7,7 @@ const {body, validationResult} = require('express-validator');
 router.get('/', fetchUser, transactionController.getTransactions);
 
 router.post('/transfer', [
-    body('receiver').isNumeric( ).isLength({min: 16, max: 16}).withMessage('Receiver must be provided'),
+    body('receiver').isNumeric().isLength({min: 16, max: 16}).withMessage('Receiver must be provided'),
     body('amount').isNumeric().withMessage('Invalid Amount'),
 ], fetchUser, transactionController.transfer)
 
