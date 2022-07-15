@@ -15,7 +15,7 @@ app.use(express.json())
 
 app.use(cors(
 	{
-		origin: "https://minibank-client.netlify.app/"
+		origin: "*"
 	}
 ))
 
@@ -23,6 +23,13 @@ app.use('/api/auth', require('./routes/auth'))
 app.use('/api/users', require('./routes/user'))
 app.use('/api/transactions', require('./routes/transaction'))
 app.use('/api/bank', require('./routes/bank'))
+
+app.get('*', (req, res) => {
+	return res.status(404).json({
+		messg: 'Not found',
+		success: false
+	})
+})
 
 app.listen(PORT, () => {
 	console.log(`listening on port http://localhost:${PORT}`)
