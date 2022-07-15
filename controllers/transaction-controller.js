@@ -1,6 +1,7 @@
 const Transaction = require('../models/Transaction')
 const Bank = require('../models/Bank');
 const User = require('../models/User');
+const {validationResult} = require('express-validator');
 
 exports.getTransactions = async (req, res) => {
     try {
@@ -22,6 +23,13 @@ exports.getTransactions = async (req, res) => {
 }
 
 exports.transfer = async (req, res) => {
+    let errors = validationResult(req)
+    errors = errors.errors.map((err) => {
+        return err.msg
+    })
+    if (errors.length != 0) {
+       return res.status(200).json({messg: errors, success: false})
+    }
     try {
         const [receiver, amount] = [req.body.receiver, req.body.amount];
         const sender = req.user.accountNo;
@@ -30,7 +38,7 @@ exports.transfer = async (req, res) => {
         const receiverAccount = await User.findOne({accountNo: receiver});
 
         if (!senderAccount || !receiverAccount) {
-            res.status(400).json('Account not found')
+            return res.status(400).json({messg: 'Account not found', success: false});
         }
 
         if (receiverAccount.role !== 'user') {
@@ -72,6 +80,13 @@ exports.transfer = async (req, res) => {
 }
 
 exports.credit = async (req, res) => {
+    let errors = validationResult(req)
+    errors = errors.errors.map((err) => {
+        return err.msg
+    })
+    if (errors.length != 0) {
+       return res.status(200).json({messg: errors, success: false})
+    }
     try {
         const {accountNo, amount} = req.body;
 
@@ -80,7 +95,6 @@ exports.credit = async (req, res) => {
         if (user.role !== 'user') {
             return res.status(400).json({messg: 'Cannot credit to this account', success: false});
         }
-
         if (!user) {
             res.status(400).json({messg: 'User not found', success: false})
         }
@@ -115,6 +129,13 @@ exports.credit = async (req, res) => {
 }
 
 exports.debit = async (req, res) => {
+    let errors = validationResult(req)
+    errors = errors.errors.map((err) => {
+        return err.msg
+    })
+    if (errors.length != 0) {
+       return res.status(200).json({messg: errors, success: false})
+    }
     try {
         const {accountNo, amount} = req.body;
 

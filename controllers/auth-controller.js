@@ -2,8 +2,16 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Bank = require('../models/Bank');
+const {validationResult} = require('express-validator');
 
 exports.logIn = async (req, res) => {
+    let errors = validationResult(req)
+    errors = errors.errors.map((err) => {
+        return err.msg
+    })
+    if (errors.length != 0) {
+       return res.status(200).json({messg: errors, success: false})
+    }
     try {
         const { email, password } = req.body;
 
@@ -12,13 +20,13 @@ exports.logIn = async (req, res) => {
         })
 
         if (!user) {
-            return res.status(400).json('User not found')
+            return res.status(400).json({messg: ['User not found'], success: false})
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            return res.status(400).json('Incorrect password')
+            return res.status(400).json({messg: ['Incorrect password'], success: false})
         }
 
         const payload = {
@@ -40,6 +48,13 @@ exports.logIn = async (req, res) => {
 }
 
 exports.createUser = async (req, res) => {
+    let errors = validationResult(req)
+    errors = errors.errors.map((err) => {
+        return err.msg
+    })
+    if (errors.length != 0) {
+       return res.status(200).json({messg: errors, success: false})
+    }
     try {
         const [name, email, password] = [req.body.name, req.body.email, req.body.password];
 
